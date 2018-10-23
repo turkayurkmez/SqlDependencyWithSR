@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -13,6 +15,13 @@ namespace SqlDependencyWithSR
         {
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
+            SqlDependency.Start(ConfigurationManager.ConnectionStrings["MyDbContext"].ConnectionString);
         }
+
+        protected void Application_End()
+        {
+            SqlDependency.Stop(ConfigurationManager.ConnectionStrings["MyDbContext"].ConnectionString);
+        }
+
     }
 }

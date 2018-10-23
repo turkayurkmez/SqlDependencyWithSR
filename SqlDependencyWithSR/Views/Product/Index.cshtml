@@ -1,0 +1,68 @@
+﻿@model IEnumerable<SqlDependencyWithSR.Models.Product>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+@Html.Hidden("Get", Url.Action("Get", "Product"))
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Ad
+            </th>
+            <th>
+                Alış Fiyatı
+            </th>
+            <th>
+                Satış Fiyatı
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="tblInfo"></tbody>
+
+
+</table>
+<button onclick="getData('button')">Getir</button>
+@section scripts{
+    <script src="~/signalr/hubs" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var products = $.connection.products;
+            products.client.displayProducts = function () {
+                getData("displayProducts");
+            };
+            $.connection.hub.start().done(function () {
+                getData();
+            });
+            
+
+        });
+        
+        function getData(workMessage) {
+            console.log(workMessage);
+            var tbl = $('#tblInfo');
+            $.ajax({
+                url: $('#Get').val(),
+                type: 'GET',
+                datatype: 'json',
+                success: function (data) {
+                    $(tbl).empty();
+                    $.each(data, function (i, model) {
+                        $(tbl).append(
+                            '<tr>' +
+                            '<td>' + model.Id + '</td>' +
+                            '<td>' + model.Name + '</td>' +
+                            '<td>' + model.Buying + '</td>' +
+                            '<td>' + model.Selling + '</td>' +
+                            '</tr>'
+                        );
+                    });
+                }
+            });
+        }
+    </script>
+}
